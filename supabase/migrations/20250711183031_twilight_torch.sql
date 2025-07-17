@@ -1,0 +1,96 @@
+/*
+  # Create exhibits table for Virtual Museum
+
+  1. New Tables
+    - `exhibits`
+      - `id` (uuid, primary key)
+      - `name` (text, exhibit name)
+      - `era` (text, technological era)
+      - `short_description` (text, brief description)
+      - `detailed_description` (text, full description)
+      - `image_url` (text, exhibit image)
+      - `category` (text, exhibit category)
+      - `timeline_events` (jsonb, array of timeline events)
+      - `is_featured` (boolean, featured exhibit flag)
+      - `created_at` (timestamptz, creation timestamp)
+
+  2. Security
+    - Enable RLS on `exhibits` table
+    - Add policy for public read access to all exhibits
+
+  3. Sample Data
+    - Insert 20+ exhibits across Industrial Revolution, Space Age, and Digital Age
+    - Include timeline events and proper categorization
+*/
+
+CREATE TABLE IF NOT EXISTS exhibits (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  name text NOT NULL,
+  era text NOT NULL,
+  short_description text NOT NULL,
+  detailed_description text NOT NULL,
+  image_url text NOT NULL,
+  category text NOT NULL,
+  timeline_events jsonb DEFAULT '[]'::jsonb,
+  is_featured boolean DEFAULT false,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE exhibits ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public read access for exhibits"
+  ON exhibits
+  FOR SELECT
+  TO anon
+  USING (true);
+
+-- Insert Industrial Revolution exhibits
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events, is_featured) VALUES
+('The Steam Engine', 'Industrial Revolution', 'The revolutionary steam engine that powered the Industrial Revolution, transforming manufacturing and transportation forever.', 'The steam engine, perfected by James Watt in 1769, marked the beginning of the Industrial Revolution. This groundbreaking invention converted heat energy into mechanical work, enabling the mechanization of production and revolutionizing transportation. The steam engine powered factories, mills, locomotives, and ships, fundamentally changing how goods were produced and distributed. Its impact extended beyond manufacturing, creating new social structures and urban development patterns that shaped modern civilization.', 'https://images.pexels.com/photos/163185/old-retro-antique-vintage-163185.jpeg', 'Manufacturing', '[{"year": 1712, "event": "Thomas Newcomen builds first practical steam engine"}, {"year": 1769, "event": "James Watt patents improved steam engine"}, {"year": 1804, "event": "First steam locomotive runs on rails"}, {"year": 1825, "event": "First passenger railway opens"}]', true);
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('The Spinning Jenny', 'Industrial Revolution', 'A multi-spindle spinning frame that revolutionized textile production and launched the factory system.', 'Invented by James Hargreaves around 1764, the Spinning Jenny transformed textile manufacturing by allowing one worker to spin multiple threads simultaneously. This mechanical device could produce eight times more thread than traditional spinning wheels, dramatically increasing productivity and reducing costs. The Spinning Jenny marked the transition from cottage industry to factory production, laying the foundation for mass manufacturing and changing the nature of work itself.', 'https://images.pexels.com/photos/4439444/pexels-photo-4439444.jpeg', 'Manufacturing', '[{"year": 1764, "event": "James Hargreaves invents the Spinning Jenny"}, {"year": 1770, "event": "First textile factories established"}, {"year": 1785, "event": "Power loom invented by Edmund Cartwright"}, {"year": 1793, "event": "Cotton gin invented by Eli Whitney"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('The Telegraph', 'Industrial Revolution', 'The first practical long-distance communication system that connected the world through electrical signals.', 'Samuel Morse''s telegraph system, demonstrated in 1844, revolutionized communication by transmitting messages instantly across vast distances using electrical signals and Morse code. This breakthrough eliminated the weeks-long delays of traditional mail delivery, enabling real-time coordination of business, news, and personal communication. The telegraph network became the nervous system of the industrial world, facilitating trade, journalism, and governance on an unprecedented global scale.', 'https://images.pexels.com/photos/33158/communications-tower-radio-antenna.jpg', 'Communication', '[{"year": 1832, "event": "Samuel Morse develops telegraph concept"}, {"year": 1844, "event": "First telegraph line: Washington to Baltimore"}, {"year": 1858, "event": "First transatlantic telegraph cable"}, {"year": 1866, "event": "Permanent transatlantic telegraph established"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('The Printing Press', 'Industrial Revolution', 'Gutenberg''s movable type printing press that democratized knowledge and information.', 'Johannes Gutenberg''s printing press, developed around 1440, revolutionized the spread of knowledge by making books affordable and widely available. Using movable metal type, this innovation reduced the cost of book production by over 90%, enabling mass literacy and the rapid dissemination of ideas. The printing press catalyzed the Renaissance, Reformation, and Scientific Revolution, fundamentally changing how humans share and preserve knowledge.', 'https://images.pexels.com/photos/267669/pexels-photo-267669.jpeg', 'Communication', '[{"year": 1440, "event": "Gutenberg perfects movable type"}, {"year": 1455, "event": "Gutenberg Bible completed"}, {"year": 1500, "event": "Over 1000 printing presses in Europe"}, {"year": 1501, "event": "Aldus Manutius creates portable books"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('The Power Loom', 'Industrial Revolution', 'Edmund Cartwright''s mechanized weaving machine that automated textile production.', 'The power loom, invented by Edmund Cartwright in 1785, mechanized the weaving process and completed the automation of textile production. When combined with water or steam power, this machine could weave cloth much faster and more consistently than hand weavers. The power loom''s adoption led to the establishment of large textile mills and contributed to the rapid growth of industrial cities, while also displacing traditional craft workers and reshaping labor relations.', 'https://images.pexels.com/photos/4439901/pexels-photo-4439901.jpeg', 'Manufacturing', '[{"year": 1785, "event": "Edmund Cartwright invents power loom"}, {"year": 1813, "event": "First successful power loom factory in America"}, {"year": 1820, "event": "Power looms widespread in Britain"}, {"year": 1840, "event": "Steam-powered looms dominate industry"}]');
+
+-- Insert Space Age exhibits
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('Sputnik 1', 'Space Age', 'The world''s first artificial satellite that launched the Space Age and ignited the space race.', 'Launched by the Soviet Union on October 4, 1957, Sputnik 1 was humanity''s first artificial satellite. This beach ball-sized sphere with four radio antennas orbited Earth every 96 minutes, transmitting radio signals that could be heard by amateur radio operators worldwide. Sputnik''s success shocked the world and demonstrated the Soviet Union''s technological capabilities, spurring the United States to accelerate its own space program and leading to the creation of NASA.', 'https://images.pexels.com/photos/586063/pexels-photo-586063.jpeg', 'Space Exploration', '[{"year": 1957, "event": "Sputnik 1 launched (October 4)"}, {"year": 1957, "event": "Sputnik 2 carries dog Laika"}, {"year": 1958, "event": "NASA established"}, {"year": 1958, "event": "Explorer 1 launched by USA"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('Apollo 11', 'Space Age', 'The historic mission that achieved humanity''s first lunar landing and fulfilled Kennedy''s moon challenge.', 'Apollo 11, launched on July 16, 1969, achieved President Kennedy''s goal of landing humans on the Moon before the end of the decade. Astronauts Neil Armstrong and Buzz Aldrin became the first humans to walk on the lunar surface while Michael Collins orbited above. This triumph of human engineering and determination demonstrated what could be achieved through focused scientific effort and international cooperation, inspiring generations to pursue careers in science and technology.', 'https://images.pexels.com/photos/87651/earth-blue-planet-globe-planet-87651.jpeg', 'Space Exploration', '[{"year": 1961, "event": "Kennedy announces moon goal"}, {"year": 1969, "event": "Apollo 11 launches (July 16)"}, {"year": 1969, "event": "First moon landing (July 20)"}, {"year": 1969, "event": "Safe return to Earth (July 24)"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('The Integrated Circuit', 'Space Age', 'The microchip invention that enabled the miniaturization of electronics and made space travel possible.', 'Invented independently by Jack Kilby at Texas Instruments and Robert Noyce at Fairchild Semiconductor in 1958-1959, the integrated circuit (microchip) revolutionized electronics by combining multiple electronic components on a single piece of semiconductor material. This breakthrough enabled the miniaturization of computers and electronics, making it possible to build the compact, reliable guidance systems needed for space missions while laying the foundation for the digital revolution.', 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg', 'Electronics', '[{"year": 1958, "event": "Jack Kilby creates first IC"}, {"year": 1959, "event": "Robert Noyce develops planar IC"}, {"year": 1961, "event": "First commercial ICs sold"}, {"year": 1971, "event": "Intel creates first microprocessor"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('Communications Satellites', 'Space Age', 'Geostationary satellites that revolutionized global telecommunications and broadcasting.', 'The development of communications satellites in the 1960s transformed global communication by enabling instant voice, data, and video transmission across continents. Early Bird (Intelsat I), launched in 1965, provided the first commercial transatlantic satellite communication service. These satellites, positioned in geostationary orbit, made possible live global television broadcasts, international telephone calls, and laid the groundwork for the internet age.', 'https://images.pexels.com/photos/586030/pexels-photo-586030.jpeg', 'Communication', '[{"year": 1962, "event": "Telstar first live TV satellite broadcast"}, {"year": 1963, "event": "Syncom 2 first geostationary satellite"}, {"year": 1965, "event": "Early Bird commercial service begins"}, {"year": 1969, "event": "Global satellite network established"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('Computer Navigation Systems', 'Space Age', 'The Apollo Guidance Computer that pioneered real-time computing and digital navigation.', 'The Apollo Guidance Computer (AGC), developed by MIT in the 1960s, was one of the first computers to use integrated circuits and featured real-time computing capabilities essential for space navigation. Weighing just 70 pounds, this revolutionary computer guided astronauts to the Moon and back, demonstrating the potential of miniaturized computing. The AGC''s innovations in software engineering and human-computer interaction influenced the development of personal computers and modern user interfaces.', 'https://images.pexels.com/photos/159591/technology-keyboard-computing-computer-159591.jpeg', 'Computing', '[{"year": 1961, "event": "MIT begins AGC development"}, {"year": 1966, "event": "First AGC flight test"}, {"year": 1969, "event": "AGC guides Apollo 11 to moon"}, {"year": 1975, "event": "AGC technology transferred to civilian use"}]');
+
+-- Insert Digital Age exhibits
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('The Personal Computer', 'Digital Age', 'The revolutionary machines that brought computing power to homes and offices worldwide.', 'The personal computer revolution of the 1970s and 1980s, led by companies like Apple, IBM, and Commodore, democratized computing by making powerful machines affordable for individuals and small businesses. The Apple II, IBM PC, and other early personal computers featured user-friendly interfaces, expandable architectures, and software ecosystems that enabled countless applications. This transformation made computing accessible to millions, spawning entire industries and changing how we work, learn, and communicate.', 'https://images.pexels.com/photos/356056/pexels-photo-356056.jpeg', 'Computing', '[{"year": 1975, "event": "Altair 8800 first successful PC kit"}, {"year": 1977, "event": "Apple II launched"}, {"year": 1981, "event": "IBM PC introduced"}, {"year": 1984, "event": "Apple Macintosh with GUI"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('The Internet', 'Digital Age', 'The global network that connected the world and transformed human communication and commerce.', 'The Internet evolved from ARPANET, a U.S. Department of Defense research project begun in 1969, into the global information superhighway we know today. Tim Berners-Lee''s invention of the World Wide Web in 1989-1991 made the Internet accessible to ordinary users through web browsers and hyperlinked documents. This transformation connected billions of people, enabling instant global communication, e-commerce, social networking, and the free flow of information that defines the modern digital age.', 'https://images.pexels.com/photos/1148820/pexels-photo-1148820.jpeg', 'Communication', '[{"year": 1969, "event": "ARPANET first message sent"}, {"year": 1989, "event": "Tim Berners-Lee proposes World Wide Web"}, {"year": 1991, "event": "First website goes online"}, {"year": 1993, "event": "Mosaic browser released"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('The Smartphone', 'Digital Age', 'Pocket-sized computers that put the power of the internet in everyone''s hands.', 'The smartphone revolution, catalyzed by the iPhone''s introduction in 2007, put powerful computing and internet connectivity in the pockets of billions of people worldwide. These devices combined phone, computer, camera, GPS, and countless other functions into a single, intuitive interface. Smartphones enabled the app economy, transformed social interaction through instant messaging and social media, revolutionized photography and media consumption, and created new business models based on location services and mobile commerce.', 'https://images.pexels.com/photos/607812/pexels-photo-607812.jpeg', 'Communication', '[{"year": 1992, "event": "IBM Simon first smartphone prototype"}, {"year": 2007, "event": "Apple iPhone launched"}, {"year": 2008, "event": "App Store opens"}, {"year": 2010, "event": "1 billion smartphones sold globally"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('Social Media Platforms', 'Digital Age', 'Digital platforms that revolutionized human connection and information sharing worldwide.', 'Social media platforms like Facebook, Twitter, and YouTube transformed how humans connect, share information, and build communities online. Beginning with Friendster and MySpace in the early 2000s, these platforms evolved to enable instant global communication, content creation, and social networking on an unprecedented scale. Social media has reshaped politics, business, entertainment, and personal relationships, while also raising important questions about privacy, misinformation, and digital well-being.', 'https://images.pexels.com/photos/267350/pexels-photo-267350.jpeg', 'Communication', '[{"year": 2003, "event": "MySpace launched"}, {"year": 2004, "event": "Facebook founded"}, {"year": 2005, "event": "YouTube launched"}, {"year": 2006, "event": "Twitter created"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('Artificial Intelligence', 'Digital Age', 'Machine learning systems that can perform tasks typically requiring human intelligence.', 'Artificial Intelligence has evolved from theoretical concepts in the 1950s to practical applications that power modern life. Machine learning algorithms now drive search engines, recommendation systems, voice assistants, and autonomous vehicles. Recent breakthroughs in deep learning and neural networks have enabled AI systems to recognize images, understand natural language, and even create art and literature. AI represents the next frontier in computing, promising to transform industries from healthcare to transportation while raising important ethical questions about automation and human-AI collaboration.', 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg', 'Computing', '[{"year": 1956, "event": "Dartmouth Conference coins AI term"}, {"year": 1997, "event": "Deep Blue defeats chess champion"}, {"year": 2012, "event": "Deep learning breakthrough in image recognition"}, {"year": 2022, "event": "ChatGPT demonstrates conversational AI"}]');
+
+INSERT INTO exhibits (name, era, short_description, detailed_description, image_url, category, timeline_events) VALUES
+('Cloud Computing', 'Digital Age', 'Distributed computing systems that deliver on-demand access to computing resources over the internet.', 'Cloud computing emerged in the 2000s as a revolutionary approach to delivering computing services over the internet, eliminating the need for organizations to maintain their own physical servers and infrastructure. Pioneered by companies like Amazon Web Services, Google Cloud, and Microsoft Azure, cloud computing enables scalable, on-demand access to storage, processing power, and software applications. This paradigm shift has enabled startups to compete with large corporations, facilitated remote work, and accelerated digital transformation across industries.', 'https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg', 'Computing', '[{"year": 2006, "event": "Amazon Web Services launches"}, {"year": 2008, "event": "Google App Engine introduced"}, {"year": 2010, "event": "Microsoft Azure released"}, {"year": 2020, "event": "Cloud adoption accelerates globally"}]');
